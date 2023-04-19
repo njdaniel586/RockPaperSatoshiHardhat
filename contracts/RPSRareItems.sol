@@ -30,14 +30,14 @@ contract RPSRareItems is ERC721, ERC721Enumerable, ERC721Burnable, Ownable {
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
 
-        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,1)))) % 2) == 1){
+        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,"1")))) % 2) == 1){
             rareItemAttributes[tokenId].lossAbsorb = 1;
         }
-        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,2)))) % 2) == 1){
-            rareItemAttributes[tokenId].incomeForWinOverride = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,2)))) % 5 + 1)*5);
+        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,"2")))) % 2) == 1){
+            rareItemAttributes[tokenId].incomeForWinOverride = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,"2")))) % 5 + 1)*5);
         }
-        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,3)))) % 2) == 1){
-            rareItemAttributes[tokenId].healthChangeFromLossOverride = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,2)))) % 5 + 1)*5);
+        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,"3")))) % 2) == 1){
+            rareItemAttributes[tokenId].healthChangeFromLossOverride = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,"2")))) % 5 + 1)*5);
         }
     }
 
