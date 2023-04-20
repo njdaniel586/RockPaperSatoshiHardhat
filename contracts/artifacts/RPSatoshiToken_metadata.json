@@ -80,19 +80,6 @@
 				"type": "event"
 			},
 			{
-				"inputs": [],
-				"name": "MINTER_ROLE",
-				"outputs": [
-					{
-						"internalType": "bytes32",
-						"name": "",
-						"type": "bytes32"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -186,6 +173,24 @@
 					}
 				],
 				"name": "burnFrom",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "burnFromUser",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -528,11 +533,11 @@
 			]
 		},
 		"contracts/RPSatoshiToken.sol": {
-			"keccak256": "0xc02828425b8a309bc1196077aa9baaaa89c9d190ba299cae279ed4c9ad3c21a1",
+			"keccak256": "0xb634b61639750beb0f0d6a34723057ea48c48568fe775596da75887b2e2dbafa",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://5817b7a2755a34a881e760917891cd048ccb349c8c2764fcda299069ae27524a",
-				"dweb:/ipfs/QmR6rAbqZtTSy2Hn4Xv85z9KmJkTjjwqx9dGCtQnK7DXBm"
+				"bzz-raw://468a61108f956e531ab8148046b973089e9c9ec6c38f4bbd6475a78ad0358258",
+				"dweb:/ipfs/QmS225Z2DSfBXZnqGy2e3v9JXRBnTfeY7yHzeaPo4Fxgc3"
 			]
 		}
 	},

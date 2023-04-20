@@ -3,11 +3,13 @@ pragma solidity ^0.8.18;
 
 import "./RPSatoshiToken.sol";
 import "./RPSHashHealToken.sol";
+import "./RPSRareItemsToken.sol";
 
 contract rockPaperSatoshi{
     string public contractName = "rockPaperSatoshi";
     RPSatoshiToken private RPSatoshi;
     RPSHashHealToken private RPSHashHeal;
+    RPSRareItemsToken private RPSRareItems;
 
     struct player{
         string name;
@@ -34,6 +36,7 @@ contract rockPaperSatoshi{
         contractAddress = address(this);
         RPSatoshi = new RPSatoshiToken();
         RPSHashHeal = new RPSHashHealToken();
+        RPSRareItems = new RPSRareItemsToken();
     }
 
     modifier onlyOwner{
@@ -51,8 +54,8 @@ contract rockPaperSatoshi{
         _;
     }
 
-    function getRPSTokenAddress() public view returns (address,address){
-        return (address(RPSatoshi),address(RPSHashHeal));
+    function getTokenAddress() public view returns (address,address,address){
+        return (address(RPSatoshi),address(RPSHashHeal),address(RPSRareItems));
     }
 
     function register(string memory name_) public onlyUnregisterd{
@@ -76,7 +79,7 @@ contract rockPaperSatoshi{
             players[msg.sender].inPvEBattle = false;
             RPSatoshi.mint(msg.sender,1 * 10 ** RPSatoshi.decimals());
             players[msg.sender].winStreak += 1;
-            if(((uint256(keccak256(abi.encodePacked(block.timestamp,msg.sender,botMove,move_)))) % 2) == 1){
+            if(((uint256(keccak256(abi.encodePacked(block.timestamp,msg.sender,botMove,move_)))) % 2) == 1){//50% chance of getting a hash heal
                 RPSHashHeal.mint(msg.sender,1 * 10 ** RPSHashHeal.decimals());
             }
             emit botBattled(msg.sender,true,"Player Wins!",0,players[msg.sender].winStreak);
@@ -84,6 +87,15 @@ contract rockPaperSatoshi{
             emit botBattled(msg.sender,false,"Draw",0,players[msg.sender].winStreak);
             //Player is still in battle since inPvEBattle still = true
         } else {//Bot wins
+
+            //uint256 totalRPSRareItemSupply = RPSRareItems.totalSupply();
+            for (uint256 i; i < RPSRareItems.balanceOf(msg.sender); i++) 
+            {
+                uint256 tokenIdToCheck = RPSRareItems.tokenOfOwnerByIndex(msg.sender,i);
+                RPSRareItems.readAttributesByTokenId(tokenIdToCheck);
+                
+            }
+
             players[msg.sender].winStreak = 0;
             players[msg.sender].health -= 10;
             players[msg.sender].inPvEBattle = false;
@@ -95,5 +107,9 @@ contract rockPaperSatoshi{
     function useHashHeal() public onlyRegistered{
         RPSHashHeal.burnFromUser(msg.sender,1 * 10 ** RPSHashHeal.decimals());
         players[msg.sender].health += 50;
+    }
+
+    function mintRareItem() public onlyRegistered{
+        RPSRareItems.safeMint(msg.sender);
     }
 }

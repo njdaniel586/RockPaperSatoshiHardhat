@@ -692,11 +692,11 @@
 			]
 		},
 		"contracts/RPSRareItems.sol": {
-			"keccak256": "0x75b9ad046b34c0dd0b627a70274677606b0d3c22f4a928a6085c35925fcc4c10",
+			"keccak256": "0x4db5b660c0b2ba3c7198a13cf06210de54e8d82fd99e8e035ad6ede87dc2b305",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://7a9bb177231f5a1bf1d60d7ed755eb03880b2543c65d56b0d247494200f382b2",
-				"dweb:/ipfs/QmRKXwRsp9mKDv7YV7FngEZ9rGET28C6aRZuGXnx9VhUSw"
+				"bzz-raw://ce12e0b978cccd5f1dfb1631a8b82f85e29c9c0ecad7400bbd105ccc7358e510",
+				"dweb:/ipfs/QmW8kmU8ksKbyKTGEkdkpkftX3MLX9b7ZiPLM9nYEL7LSP"
 			]
 		}
 	},

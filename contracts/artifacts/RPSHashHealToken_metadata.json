@@ -80,19 +80,6 @@
 				"type": "event"
 			},
 			{
-				"inputs": [],
-				"name": "MINTER_ROLE",
-				"outputs": [
-					{
-						"internalType": "bytes32",
-						"name": "",
-						"type": "bytes32"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -186,6 +173,24 @@
 					}
 				],
 				"name": "burnFrom",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "burnFromUser",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -528,11 +533,11 @@
 			]
 		},
 		"contracts/RPSHashHealToken.sol": {
-			"keccak256": "0xfd584cb7bd285ead9597d8c464583a3b025ed312be6853635eadae72358cb769",
+			"keccak256": "0x255b847487250b63ed64be04e47f5347ed6fac51125c3a8ec4ba5396993c2216",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://de24c134fd46c0e72b54a7e285c22b697b6771c0a1641da88c786f283449cfe3",
-				"dweb:/ipfs/QmakMGSVEFA9WTUx54CdcJEhmh65FNQB6CXB1EEh3pXndQ"
+				"bzz-raw://2f4b9f7aa64aa3c3206dc9b19519e74fbfc0d3078f7f473fc46a475f4e24ed0a",
+				"dweb:/ipfs/QmdR6BpFc68ovhDS5Rc1p2CF3UcukDwGKaxEjsrRzPjKG6"
 			]
 		}
 	},
