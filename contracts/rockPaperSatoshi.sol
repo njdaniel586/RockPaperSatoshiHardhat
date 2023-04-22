@@ -22,6 +22,7 @@ contract rockPaperSatoshi {
         bool inPvEBattle;
         uint256 chosenMove;
         uint256 winStreak;
+        uint256 currentLossAbsorb;
     }
 
     address public owner;
@@ -146,46 +147,60 @@ contract rockPaperSatoshi {
             uint256[] memory healthChangeFromLossOverride_= new uint256[](2);
             uint256[] memory RPSatoshiCostToUse_= new uint256[](2);
             uint256[] memory healthCostToUse_= new uint256[](2);
+            uint256 lossAbsorbSum_;
+            uint256 incomeForWinOverrideSum_;
+            uint256 healthChangeFromLossOverrideSum_;
+            uint256 RPSatoshiCostToUseSum_;
+            uint256 healthCostToUseSum_;
+
+            uint256 enabledCounter;
             for (uint256 i; i < RPSRareItems.balanceOf(msg.sender); i++) {
                 uint256 tokenIdToCheck = RPSRareItems.tokenOfOwnerByIndex(msg.sender,i);
                 RPSRareItemsToken.RareItemAttributes memory rareItemAttributesFromToken = RPSRareItems.readAttributesByTokenId(tokenIdToCheck);
-                bool enabeled_ = rareItemAttributesFromToken.enabeled;
-                if(enabeled_){
-                    lossAbsorb_[i] = rareItemAttributesFromToken.lossAbsorb;
-                    incomeForWinOverride_[i] = rareItemAttributesFromToken.incomeForWinOverride;
-                    healthChangeFromLossOverride_[i] = rareItemAttributesFromToken.healthChangeFromLossOverride;
-                    RPSatoshiCostToUse_[i] = rareItemAttributesFromToken.RPSatoshiCostToUse;
-                    healthCostToUse_[i] = rareItemAttributesFromToken.healthCostToUse;
-                    emit emitUint256("Loss Absorb emit inside loop", lossAbsorb_[i]);
+                bool enabled_ = rareItemAttributesFromToken.enabled;
+                if(enabled_){
+                    lossAbsorb_[enabledCounter] = rareItemAttributesFromToken.lossAbsorb;
+                    incomeForWinOverride_[enabledCounter] = rareItemAttributesFromToken.incomeForWinOverride;
+                    healthChangeFromLossOverride_[enabledCounter] = rareItemAttributesFromToken.healthChangeFromLossOverride;
+                    RPSatoshiCostToUse_[enabledCounter] = rareItemAttributesFromToken.RPSatoshiCostToUse;
+                    healthCostToUse_[enabledCounter] = rareItemAttributesFromToken.healthCostToUse;
+
+                    lossAbsorbSum_ += lossAbsorb_[enabledCounter];
+                    incomeForWinOverrideSum_ += incomeForWinOverride_[enabledCounter];
+                    healthChangeFromLossOverrideSum_ += healthChangeFromLossOverride_[enabledCounter];
+                    RPSatoshiCostToUseSum_ += RPSatoshiCostToUse_[enabledCounter];
+                    healthCostToUseSum_ += healthCostToUse_[enabledCounter];
+                    enabledCounter++;
                 }
+                //Time to implement code that saves players from losses, adjustes health from loss, etc
+            }
 
-
-
-                
+            //Show the enabeled rareItems by the user.
+            for(uint256 i; i < enabledCounter; i++){
                 emit emitRareItemAttributesFromMainContract(
-                    "Emit from for loop in main contract that's checking the attributes of the NFTs owned by the user",
+                    "Emit from for loop in main contract that's checking the attributes of the enabled NFTs owned by the user",
                     lossAbsorb_[i],
                     incomeForWinOverride_[i],
                     healthChangeFromLossOverride_[i],
                     RPSatoshiCostToUse_[i],
                     healthCostToUse_[i],
-                    enabeled_
+                    true
                 );
-                //uint256 lossAbsorb_ = RPSRareItems(tokenIdToCheck).RareItemAttributes.lossAbsorb;
-                //emit emitRareItemAttributes(rareItemAttributesFromToken);
-                //console.log(rareItemAttributesFromToken);
-                //RareItemAttributes memory rareItemAttributes_ = RPSRareItems.readAttributesByTokenId(tokenIdToCheck);
-                //Time to implement code that saves players from losses, adjustes health from loss, etc
             }
-
-            //Run a test and see if this for loop returns the lossAbsorbs of all enabled nfts by the user.
-            for(uint256 i; i < lossAbsorb_.length; i++){
-                emit emitUint256("2nd loop Loss Absorb emit", lossAbsorb_[i]);
-            }
+                emit emitRareItemAttributesFromMainContract(
+                    "Emit the sum of attributes of the enabled NFTs owned by the user",
+                    lossAbsorbSum_,
+                    incomeForWinOverrideSum_,
+                    healthChangeFromLossOverrideSum_,
+                    RPSatoshiCostToUseSum_,
+                    healthCostToUseSum_,
+                    true
+                );
 
             players[msg.sender].winStreak = 0;
             players[msg.sender].health -= 10;
             players[msg.sender].inPvEBattle = false;
+            players[msg.sender].currentLossAbsorb = 0;
             emit botBattled(
                 msg.sender,
                 false,
@@ -203,5 +218,23 @@ contract rockPaperSatoshi {
 
     function mintRareItem() public onlyRegistered {
         RPSRareItems.safeMint(msg.sender);
+        //Probably should emit what they get.
+    }
+
+    function enableRareItem(uint256 tokenId_) public onlyRegistered {
+        require(RPSRareItems.ownerOf(tokenId_) == msg.sender);
+        uint256 enabeledCounter;
+        //Need to get ids of rare items owned by the msg.sender
+        for (uint256 i; i < RPSRareItems.balanceOf(msg.sender); i++) {
+            uint256 tokenIdToCheck = RPSRareItems.tokenOfOwnerByIndex(msg.sender,i);
+            RPSRareItemsToken.RareItemAttributes memory rareItemAttributesFromToken = RPSRareItems.readAttributesByTokenId(tokenIdToCheck);
+            if(rareItemAttributesFromToken.enabled){
+                enabeledCounter++;
+                require(enabeledCounter < 2, "User has 2 or more tokens already enabeled");
+            }
+        }
+        RPSRareItems.enableToken(tokenId_);
+        //If there is trading, need to make sure tokens are disabeled before they can be traded (or make it automatic).
+        //Make is so they cannot trade during combat.
     }
 }

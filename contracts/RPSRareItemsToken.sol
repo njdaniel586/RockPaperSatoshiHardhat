@@ -18,7 +18,7 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
         uint256 healthChangeFromLossOverride;
         uint256 RPSatoshiCostToUse;
         uint256 healthCostToUse;
-        bool enabeled;
+        bool enabled;
     }
 
     mapping(uint256 => RareItemAttributes) private rareItemAttributes;
@@ -51,10 +51,18 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
     }
 
 
-    function readAttributesByTokenId(uint256 tokenId) public returns(RareItemAttributes memory){
+    function readAttributesByTokenId(uint256 tokenId) public returns(RareItemAttributes memory){//Should this be onlyOwner?
         emit emitRareItemAttributes(rareItemAttributes[tokenId]);
         return rareItemAttributes[tokenId];
     }
+
+    function enableToken(uint256 tokenId) public onlyOwner{
+        //Should I also take in the msg.sender from the main contract and then confirm they are the owner of the tokenId as a double check?
+        rareItemAttributes[tokenId].enabled = true;
+    }
+
+
+    //I should write gas free function that emits all the RareItems owned by the caller*****
 
     // The following functions are overrides required by Solidity.
 

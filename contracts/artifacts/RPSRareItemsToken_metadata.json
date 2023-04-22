@@ -136,7 +136,7 @@
 							},
 							{
 								"internalType": "bool",
-								"name": "enabeled",
+								"name": "enabled",
 								"type": "bool"
 							}
 						],
@@ -195,6 +195,19 @@
 					}
 				],
 				"name": "burn",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "enableToken",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -326,7 +339,7 @@
 							},
 							{
 								"internalType": "bool",
-								"name": "enabeled",
+								"name": "enabled",
 								"type": "bool"
 							}
 						],
@@ -788,11 +801,11 @@
 			]
 		},
 		"contracts/RPSRareItemsToken.sol": {
-			"keccak256": "0x27a7b3ab417a9cb051f728e3bb39c5593815e444f72e8a7ff03e5f5e7ae10943",
+			"keccak256": "0xb8a36b4a2bb7bae1e000b75dea1c7495169392b52137bb89540e820e826cbf76",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://220e961ceea2aff0d047e966d783ac2fa74603872c9435bc2e47db83f004a95b",
-				"dweb:/ipfs/Qmb4yUxUdbVMMGRdGssMDowRmknVY48sTgPP771DcJ7ups"
+				"bzz-raw://f593175370a36f14bc852f2572bb7fe4532bec923e29461991af135bd69adfdf",
+				"dweb:/ipfs/QmRZVkRKQP1AdAfzG8aJBqx73ApQqaqLmsYybDKDnygo1c"
 			]
 		}
 	},
