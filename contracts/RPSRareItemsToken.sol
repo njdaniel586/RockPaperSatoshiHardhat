@@ -13,6 +13,7 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
     Counters.Counter private _tokenIdCounter;
 
     struct RareItemAttributes{
+        uint256 tokenId;
         uint256 lossAbsorb;
         uint256 incomeForWinOverride;
         uint256 healthChangeFromLossOverride;
@@ -21,7 +22,7 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
         bool enabled;
     }
 
-    mapping(uint256 => RareItemAttributes) private rareItemAttributes;
+    mapping(uint256 => RareItemAttributes) private rareItemAttributes;//Rare item attributes mapped by token id.
 
     event emitRareItemAttributes(RareItemAttributes rareItemAttributes_);
 
@@ -29,24 +30,26 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
     constructor() ERC721("RPSRareItems", "RPR") {}
 
     function safeMint(address to) public onlyOwner {
-        uint256 tokenId = _tokenIdCounter.current();
+        uint256 tokenId_ = _tokenIdCounter.current();
         _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
+        _safeMint(to, tokenId_);
 
-        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,"1")))) % 2) == 1){//50% chance to provide lossAbsorb
-            rareItemAttributes[tokenId].lossAbsorb = 1;
+        rareItemAttributes[tokenId_].tokenId = tokenId_;
+
+        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"1")))) % 2) == 1){//50% chance to provide lossAbsorb
+            rareItemAttributes[tokenId_].lossAbsorb = 1;
         }
-        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,"2")))) % 2) == 1){
-            rareItemAttributes[tokenId].incomeForWinOverride = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,"2")))) % 5 + 1)*5);//Equal chance of a 5,10,15,20, or 25 income override for a win.
+        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"2")))) % 2) == 1){
+            rareItemAttributes[tokenId_].incomeForWinOverride = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"2")))) % 5 + 1)*5);//Equal chance of a 5,10,15,20, or 25 income override for a win.
         }
-        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,"3")))) % 2) == 1){
-            rareItemAttributes[tokenId].healthChangeFromLossOverride = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,"3")))) % 5 + 1)*5);//Equal chance of a 5,10,15,20, or 25 health loss override for a loss.
+        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"3")))) % 2) == 1){
+            rareItemAttributes[tokenId_].healthChangeFromLossOverride = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"3")))) % 5 + 1)*5);//Equal chance of a 5,10,15,20, or 25 health loss override for a loss.
         }
-        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,"4")))) % 2) == 1){
-            rareItemAttributes[tokenId].RPSatoshiCostToUse = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,"4")))) % 5 + 1)*5);//Equal chance of a 5,10,15,20, or 25 RPSatoshi cost for each battle used.
+        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"4")))) % 2) == 1){
+            rareItemAttributes[tokenId_].RPSatoshiCostToUse = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"4")))) % 5 + 1)*5);//Equal chance of a 5,10,15,20, or 25 RPSatoshi cost for each battle used.
         }
-        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,"5")))) % 2) == 1){
-            rareItemAttributes[tokenId].healthCostToUse = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId,"5")))) % 5 + 1)*5);//Equal chance of a 5,10,15,20, or 25 health cost for each battle used.
+        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"5")))) % 2) == 1){
+            rareItemAttributes[tokenId_].healthCostToUse = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"5")))) % 5 + 1)*5);//Equal chance of a 5,10,15,20, or 25 health cost for each battle used.
         }
     }
 
@@ -62,7 +65,15 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
     }
 
 
-    //I should write gas free function that emits all the RareItems owned by the caller*****
+    function getAllTokensOwnedByAddress(address address_) public view returns(RareItemAttributes[] memory rareItemAttributes_){//Gass free return of all tokens owned by the given address.
+        RareItemAttributes[] memory _rareItemAttributes = new RareItemAttributes[](balanceOf(address_));
+        for(uint256 i; i < balanceOf(address_); i++){
+            uint256 tokenId_ = tokenOfOwnerByIndex(address_, i);
+            _rareItemAttributes[i] = rareItemAttributes[tokenId_];
+        }
+        return _rareItemAttributes;
+    }
+
 
     // The following functions are overrides required by Solidity.
 

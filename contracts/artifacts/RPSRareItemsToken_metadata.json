@@ -111,6 +111,11 @@
 						"components": [
 							{
 								"internalType": "uint256",
+								"name": "tokenId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
 								"name": "lossAbsorb",
 								"type": "uint256"
 							},
@@ -215,6 +220,62 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "address_",
+						"type": "address"
+					}
+				],
+				"name": "getAllTokensOwnedByAddress",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "tokenId",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "lossAbsorb",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "incomeForWinOverride",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "healthChangeFromLossOverride",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "RPSatoshiCostToUse",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "healthCostToUse",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "enabled",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct RPSRareItemsToken.RareItemAttributes[]",
+						"name": "rareItemAttributes_",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "uint256",
 						"name": "tokenId",
 						"type": "uint256"
@@ -312,6 +373,11 @@
 				"outputs": [
 					{
 						"components": [
+							{
+								"internalType": "uint256",
+								"name": "tokenId",
+								"type": "uint256"
+							},
 							{
 								"internalType": "uint256",
 								"name": "lossAbsorb",
@@ -801,11 +867,11 @@
 			]
 		},
 		"contracts/RPSRareItemsToken.sol": {
-			"keccak256": "0xb8a36b4a2bb7bae1e000b75dea1c7495169392b52137bb89540e820e826cbf76",
+			"keccak256": "0x047c25256b002cfcd2d44e79c7c5e99abbf49084fd147b4a6d30125b29620cc2",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f593175370a36f14bc852f2572bb7fe4532bec923e29461991af135bd69adfdf",
-				"dweb:/ipfs/QmRZVkRKQP1AdAfzG8aJBqx73ApQqaqLmsYybDKDnygo1c"
+				"bzz-raw://7006dee5864b240b6f013152284d3d6ab8fa0b13ffb87bdcbf73e0e51658b647",
+				"dweb:/ipfs/QmVUpZE63N8sZFxBvowfZP3Sfe6TPnYDeBHMzJjjNp69ev"
 			]
 		}
 	},
