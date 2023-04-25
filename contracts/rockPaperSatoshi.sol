@@ -27,6 +27,8 @@ contract rockPaperSatoshi {
         uint256 currentRPSatoshiCostToUse;
         uint256 currentHealthCostToUse;
         //Need to write a function for disabling these that resets stats back to default.
+        //Max win streak obtained??
+        //Global that containes the current king of the hill in terms of win streak.
     }
 
     address public owner;
@@ -117,6 +119,10 @@ contract rockPaperSatoshi {
 
     function battlePvE(uint256 move_) public onlyRegistered {
         require(players[msg.sender].inPvEBattle == true);
+        if(players[msg.sender].health == 0 || players[msg.sender].health > 300 || RPSatoshi.balanceOf(msg.sender) < players[msg.sender].currentRPSatoshiCostToUse){
+            players[msg.sender].inPvEBattle = false;//Need to test. This happens if player runs out of health due to Rare item health loss.
+            return;
+        }
         //We use block time since our game will be too small of a fish to manipulate (likely) and charging $3 in gas for every PvE battle is too much.
         //But maybe I can use a real oracle once someone's win streak reaches 15 or something.
         uint256 botMove = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % 3;
@@ -187,7 +193,12 @@ contract rockPaperSatoshi {
 
     function useHashHeal() public onlyRegistered {
         RPSHashHeal.burnFromUser(msg.sender, 1 * 10**RPSHashHeal.decimals());
-        players[msg.sender].health += 50;
+        if(players[msg.sender].health + 50 >= players[msg.sender].healthMax){
+            players[msg.sender].health = players[msg.sender].healthMax;
+        } else{
+            players[msg.sender].health += 50;
+        }
+
     }
 
     function mintRareItem() public onlyRegistered {
@@ -232,8 +243,8 @@ contract rockPaperSatoshi {
             }
             players[msg.sender].currentLossAbsorb = lossAbsorbSum_;
             players[msg.sender].currentIncomeForWinOverride = incomeForWinOverrideSum_;//Done
-            players[msg.sender].currentHealthModifier = healthModifierSum_;//Done but need to test
-            players[msg.sender].healthMax = 100 + healthModifierSum_;//Done but need to test
+            players[msg.sender].currentHealthModifier = healthModifierSum_;//Done
+            players[msg.sender].healthMax = 100 + healthModifierSum_;//Done
             players[msg.sender].currentRPSatoshiCostToUse = RPSatoshiCostToUseSum_;//Up next
             players[msg.sender].currentHealthCostToUse = healthCostToUseSum_;
             //Time to implement more code that saves players from losses, adjustes health from loss, etc
