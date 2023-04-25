@@ -16,7 +16,7 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
         uint256 tokenId;
         uint256 lossAbsorb;
         uint256 incomeForWinOverride;
-        uint256 healthChangeFromLossOverride;
+        uint256 healthModifier;
         uint256 RPSatoshiCostToUse;
         uint256 healthCostToUse;
         bool enabled;
@@ -43,12 +43,12 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
             rareItemAttributes[tokenId_].incomeForWinOverride = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"2")))) % 5 + 1)*5);//Equal chance of a 5,10,15,20, or 25 income override for a win.
         }
         if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"3")))) % 2) == 1){
-            rareItemAttributes[tokenId_].healthChangeFromLossOverride = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"3")))) % 5 + 1)*5);//Equal chance of a 5,10,15,20, or 25 health loss override for a loss.
+            rareItemAttributes[tokenId_].healthModifier = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"3")))) % 5 + 1)*10);//Equal chance of a 10,20,30,40, or 50 increase to max health (when equipped).
         }
         if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"4")))) % 2) == 1){
             rareItemAttributes[tokenId_].RPSatoshiCostToUse = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"4")))) % 5 + 1)*5);//Equal chance of a 5,10,15,20, or 25 RPSatoshi cost for each battle used.
         }
-        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"5")))) % 2) == 1){
+        if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"5")))) % 2) == 1){//Probably should make it a garunteeed health loss if lossAbsorb is enabled.
             rareItemAttributes[tokenId_].healthCostToUse = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"5")))) % 5 + 1)*5);//Equal chance of a 5,10,15,20, or 25 health cost for each battle used.
         }
     }
@@ -61,6 +61,7 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
 
     function enableToken(uint256 tokenId) public onlyOwner{
         //Should I also take in the msg.sender from the main contract and then confirm they are the owner of the tokenId as a double check?
+        require(rareItemAttributes[tokenId].enabled == false);
         rareItemAttributes[tokenId].enabled = true;
     }
 

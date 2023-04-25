@@ -126,7 +126,7 @@
 							},
 							{
 								"internalType": "uint256",
-								"name": "healthChangeFromLossOverride",
+								"name": "healthModifier",
 								"type": "uint256"
 							},
 							{
@@ -246,7 +246,7 @@
 							},
 							{
 								"internalType": "uint256",
-								"name": "healthChangeFromLossOverride",
+								"name": "healthModifier",
 								"type": "uint256"
 							},
 							{
@@ -390,7 +390,7 @@
 							},
 							{
 								"internalType": "uint256",
-								"name": "healthChangeFromLossOverride",
+								"name": "healthModifier",
 								"type": "uint256"
 							},
 							{
@@ -867,11 +867,11 @@
 			]
 		},
 		"contracts/RPSRareItemsToken.sol": {
-			"keccak256": "0x047c25256b002cfcd2d44e79c7c5e99abbf49084fd147b4a6d30125b29620cc2",
+			"keccak256": "0x2d144d61529a231acab4a1dbb75a62ce896eb48bfd30c8ba7473fa13aab168d6",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://7006dee5864b240b6f013152284d3d6ab8fa0b13ffb87bdcbf73e0e51658b647",
-				"dweb:/ipfs/QmVUpZE63N8sZFxBvowfZP3Sfe6TPnYDeBHMzJjjNp69ev"
+				"bzz-raw://7fa177ad8fab029fbe7effef92b2220537c672e6fc967a61a0f5024ffc5a5369",
+				"dweb:/ipfs/QmTNaVBT9H1XGUwYKpC1RDY2jRL1Ve965uMmFm2QTBnobt"
 			]
 		}
 	},
