@@ -113,16 +113,32 @@ contract rockPaperSatoshi {
 
     function initPvE() public onlyRegistered {
         require(players[msg.sender].inPvEBattle == false);
-        require(players[msg.sender].health > 0);//Need to test
+        require(players[msg.sender].health > 0 && players[msg.sender].health > players[msg.sender].currentHealthCostToUse);
+        require(players[msg.sender].health <= 300);
+        require(RPSatoshi.balanceOf(msg.sender) >= players[msg.sender].currentRPSatoshiCostToUse * 10**RPSatoshi.decimals());
         players[msg.sender].inPvEBattle = true;
     }
 
     function battlePvE(uint256 move_) public onlyRegistered {
         require(players[msg.sender].inPvEBattle == true);
-        if(players[msg.sender].health == 0 || players[msg.sender].health > 300 || RPSatoshi.balanceOf(msg.sender) < players[msg.sender].currentRPSatoshiCostToUse){
-            players[msg.sender].inPvEBattle = false;//Need to test. This happens if player runs out of health due to Rare item health loss.
-            return;
+        if(players[msg.sender].health == 0 || players[msg.sender].health < players[msg.sender].currentHealthCostToUse){
+            emit emitUint256("Player health is too low. They only have: ", players[msg.sender].health);
+            emit emitUint256("players[msg.sender].currentHealthCostToUse", players[msg.sender].currentHealthCostToUse);
+            players[msg.sender].inPvEBattle = false;//This happens if player runs out of health due to Rare item health loss.
+            return();//Need to return here otherwise reverting will reset the state change we made of inPvEBattle = false.
+        }else if(players[msg.sender].health > 300){
+            emit emitUint256("Player health overflowed. They have: ", players[msg.sender].health);
+            players[msg.sender].inPvEBattle = false;//
+            return();//Need to return here otherwise reverting will reset the state change we made of inPvEBattle = false.
+        }else if(RPSatoshi.balanceOf(msg.sender) < players[msg.sender].currentRPSatoshiCostToUse * 10**RPSatoshi.decimals()){
+            emit emitUint256("Player is too low on RPSatoshis. They have only: ", RPSatoshi.balanceOf(msg.sender));
+            emit emitUint256("players[msg.sender].currentRPSatoshiCostToUse * 10**RPSatoshi.decimals()", players[msg.sender].currentRPSatoshiCostToUse * 10**RPSatoshi.decimals());
+            players[msg.sender].inPvEBattle = false;//This happens if player runs out of health due to Rare item health loss.
+            return();//Need to return here otherwise reverting will reset the state change we made of inPvEBattle = false.
         }
+        RPSatoshi.burnFromUser(msg.sender, players[msg.sender].currentRPSatoshiCostToUse * 10**RPSatoshi.decimals());//This should never revert.
+        players[msg.sender].health -= players[msg.sender].currentHealthCostToUse;
+
         //We use block time since our game will be too small of a fish to manipulate (likely) and charging $3 in gas for every PvE battle is too much.
         //But maybe I can use a real oracle once someone's win streak reaches 15 or something.
         uint256 botMove = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % 3;
@@ -189,6 +205,11 @@ contract rockPaperSatoshi {
                 );
             }
         }
+        if(players[msg.sender].health == 0){
+            emit emitUint256("2nd Check: Player health is too low. They only have: ", players[msg.sender].health);
+            players[msg.sender].inPvEBattle = false;
+            return();//Need to return here otherwise reverting will reset the state change we made of inPvEBattle = false.
+        }
     }
 
     function useHashHeal() public onlyRegistered {
@@ -199,6 +220,14 @@ contract rockPaperSatoshi {
             players[msg.sender].health += 50;
         }
 
+    }
+
+    function getHashHeal() public onlyRegistered {
+        RPSHashHeal.mint(msg.sender, 1*10**RPSHashHeal.decimals());
+    }
+
+    function getMoney() public onlyRegistered {
+        RPSatoshi.mint(msg.sender, 10*10**RPSatoshi.decimals());
     }
 
     function mintRareItem() public onlyRegistered {
@@ -242,13 +271,11 @@ contract rockPaperSatoshi {
 
             }
             players[msg.sender].currentLossAbsorb = lossAbsorbSum_;
-            players[msg.sender].currentIncomeForWinOverride = incomeForWinOverrideSum_;//Done
-            players[msg.sender].currentHealthModifier = healthModifierSum_;//Done
-            players[msg.sender].healthMax = 100 + healthModifierSum_;//Done
-            players[msg.sender].currentRPSatoshiCostToUse = RPSatoshiCostToUseSum_;//Up next
+            players[msg.sender].currentIncomeForWinOverride = incomeForWinOverrideSum_;
+            players[msg.sender].currentHealthModifier = healthModifierSum_;
+            players[msg.sender].healthMax = 100 + healthModifierSum_;
+            players[msg.sender].currentRPSatoshiCostToUse = RPSatoshiCostToUseSum_;
             players[msg.sender].currentHealthCostToUse = healthCostToUseSum_;
-            //Time to implement more code that saves players from losses, adjustes health from loss, etc
-            //Show the enabled rareItems by the user.
 
             emit emitRareItemAttributesFromMainContract(
                 "Emit the sum of attributes of the enabled NFTs owned by the user",
