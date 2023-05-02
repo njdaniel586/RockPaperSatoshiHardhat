@@ -116,6 +116,32 @@
 				"type": "event"
 			},
 			{
+				"inputs": [],
+				"name": "RPSKingAddress",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "RPSKingStreak",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "uint256",
@@ -152,6 +178,19 @@
 					}
 				],
 				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId_",
+						"type": "uint256"
+					}
+				],
+				"name": "disableRareItem",
+				"outputs": [],
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -530,11 +569,11 @@
 			]
 		},
 		"contracts/rockPaperSatoshi.sol": {
-			"keccak256": "0x43a2e12df66a2d2175e0ab388113b13284e3aeadc5bb2575af60b10a6c91bc1c",
+			"keccak256": "0xf6c1691415676ab4fe03f738c31d631806d19bba1ec50cb59d58086fc8da744d",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://69885ff46201971ad857bc18cfee641a2b17ce4db177a053f2bedb0deac69493",
-				"dweb:/ipfs/QmV5Gtgcrk5UyoFLdE3GqTiQDttaVJ8jumKC8tbkJ9wvRy"
+				"bzz-raw://deecf750fa07f8afcd018f485c6a4c8937b5be7e7c7e816c4ee37f175233b38a",
+				"dweb:/ipfs/QmbYcfhogL28byxTee4wiNVbiRe2qC6G85Mwhn8Mh37tmX"
 			]
 		}
 	},

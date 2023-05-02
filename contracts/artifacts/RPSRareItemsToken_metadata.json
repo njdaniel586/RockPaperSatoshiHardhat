@@ -121,12 +121,12 @@
 							},
 							{
 								"internalType": "uint256",
-								"name": "incomeForWinOverride",
+								"name": "incomeForWinBonus",
 								"type": "uint256"
 							},
 							{
 								"internalType": "uint256",
-								"name": "healthModifier",
+								"name": "healthIncreaseModifier",
 								"type": "uint256"
 							},
 							{
@@ -141,7 +141,7 @@
 							},
 							{
 								"internalType": "bool",
-								"name": "enabled",
+								"name": "equipped",
 								"type": "bool"
 							}
 						],
@@ -212,7 +212,20 @@
 						"type": "uint256"
 					}
 				],
-				"name": "enableToken",
+				"name": "disableToken",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "equippedToken",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -241,12 +254,12 @@
 							},
 							{
 								"internalType": "uint256",
-								"name": "incomeForWinOverride",
+								"name": "incomeForWinBonus",
 								"type": "uint256"
 							},
 							{
 								"internalType": "uint256",
-								"name": "healthModifier",
+								"name": "healthIncreaseModifier",
 								"type": "uint256"
 							},
 							{
@@ -261,7 +274,7 @@
 							},
 							{
 								"internalType": "bool",
-								"name": "enabled",
+								"name": "equipped",
 								"type": "bool"
 							}
 						],
@@ -385,12 +398,12 @@
 							},
 							{
 								"internalType": "uint256",
-								"name": "incomeForWinOverride",
+								"name": "incomeForWinBonus",
 								"type": "uint256"
 							},
 							{
 								"internalType": "uint256",
-								"name": "healthModifier",
+								"name": "healthIncreaseModifier",
 								"type": "uint256"
 							},
 							{
@@ -405,7 +418,7 @@
 							},
 							{
 								"internalType": "bool",
-								"name": "enabled",
+								"name": "equipped",
 								"type": "bool"
 							}
 						],
@@ -867,11 +880,11 @@
 			]
 		},
 		"contracts/RPSRareItemsToken.sol": {
-			"keccak256": "0x2d144d61529a231acab4a1dbb75a62ce896eb48bfd30c8ba7473fa13aab168d6",
+			"keccak256": "0x52ed32b4d6f5ca1263b3d387ebbfeee5168461ace6dc0fb15fcb4a645587bede",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://7fa177ad8fab029fbe7effef92b2220537c672e6fc967a61a0f5024ffc5a5369",
-				"dweb:/ipfs/QmTNaVBT9H1XGUwYKpC1RDY2jRL1Ve965uMmFm2QTBnobt"
+				"bzz-raw://9049c536003efc78bc8d58f786cc0aa06f8b475b5b4b2432eb09f92401b7c306",
+				"dweb:/ipfs/QmfF8sVviragoPuCcoJ14zWJxeUW3HMa6qBwxfbg84ADyj"
 			]
 		}
 	},
