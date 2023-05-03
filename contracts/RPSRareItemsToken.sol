@@ -16,7 +16,7 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
         uint256 tokenId;
         uint256 lossAbsorb;
         uint256 incomeForWinBonus;
-        uint256 healthIncreaseModifier;
+        uint256 maxHealthIncreaseModifier;
         uint256 RPSatoshiCostToUse;
         uint256 healthCostToUse;
         bool equipped;
@@ -43,7 +43,7 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
             rareItemAttributes[tokenId_].incomeForWinBonus = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"2")))) % 5 + 1)*5);//Equal chance of a 5,10,15,20, or 25 income Bonus for a win.
         }
         if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"3")))) % 2) == 1){
-            rareItemAttributes[tokenId_].healthIncreaseModifier = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"3")))) % 5 + 1)*10);//Equal chance of a 10,20,30,40, or 50 increase to max health (when equipped).
+            rareItemAttributes[tokenId_].maxHealthIncreaseModifier = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"3")))) % 5 + 1)*10);//Equal chance of a 10,20,30,40, or 50 increase to max health (when equipped).
         }
         if(((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"4")))) % 2) == 1){
             rareItemAttributes[tokenId_].RPSatoshiCostToUse = (((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"4")))) % 5 + 1)*5);//Equal chance of a 5,10,15,20, or 25 RPSatoshi cost for each battle used.
@@ -59,7 +59,7 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
         return rareItemAttributes[tokenId];
     }
 
-    function equippedToken(uint256 tokenId) public onlyOwner{
+    function equipToken(uint256 tokenId) public onlyOwner{
         //Should I also take in the msg.sender from the main contract and then confirm they are the owner of the tokenId as a double check?
         require(rareItemAttributes[tokenId].equipped == false);
         rareItemAttributes[tokenId].equipped = true;

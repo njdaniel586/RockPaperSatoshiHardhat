@@ -126,7 +126,7 @@
 							},
 							{
 								"internalType": "uint256",
-								"name": "healthIncreaseModifier",
+								"name": "maxHealthIncreaseModifier",
 								"type": "uint256"
 							},
 							{
@@ -225,7 +225,7 @@
 						"type": "uint256"
 					}
 				],
-				"name": "equippedToken",
+				"name": "equipToken",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -259,7 +259,7 @@
 							},
 							{
 								"internalType": "uint256",
-								"name": "healthIncreaseModifier",
+								"name": "maxHealthIncreaseModifier",
 								"type": "uint256"
 							},
 							{
@@ -403,7 +403,7 @@
 							},
 							{
 								"internalType": "uint256",
-								"name": "healthIncreaseModifier",
+								"name": "maxHealthIncreaseModifier",
 								"type": "uint256"
 							},
 							{
@@ -880,11 +880,11 @@
 			]
 		},
 		"contracts/RPSRareItemsToken.sol": {
-			"keccak256": "0x52ed32b4d6f5ca1263b3d387ebbfeee5168461ace6dc0fb15fcb4a645587bede",
+			"keccak256": "0x39eb8073a8f8e3bd71fccefb15bc700bf12b160593a83eb81bb378b850e4e67d",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://9049c536003efc78bc8d58f786cc0aa06f8b475b5b4b2432eb09f92401b7c306",
-				"dweb:/ipfs/QmfF8sVviragoPuCcoJ14zWJxeUW3HMa6qBwxfbg84ADyj"
+				"bzz-raw://772d77b1099a70fb4fb98f631361bd31eb872a73ccfcbfc1c7881b0c2fe8ddc6",
+				"dweb:/ipfs/QmSmvjyrQVPX83V3qyjgnmTMWi1Do9sEYf9FWZ9tPPkhco"
 			]
 		}
 	},
