@@ -18,7 +18,7 @@ contract rockPaperSatoshi {
         string name;//A store of the players name.
         bool registered;//Wether or not the player is registered
         uint256 health;//The current health of the player (changes with any healing/damage taken).
-        bool inPvEBattle;//Wether or not the player is in a PvE battle.
+        bool inPvEEncounter;//Wether or not the player is in a PvE battle.
         uint256 winStreak;//The current win streak of the player.
         uint256 maxWinStreak;//The max win streak the player has acheived.
         uint256 currentLossAbsorbMax;//loss absorb is basically loss protection when the user loses a round. currentLossAbsorbMax is the maximum amount of loss absorbs they have (due to rare item modifiers) going into a battle.
@@ -41,10 +41,7 @@ contract rockPaperSatoshi {
 
     event botBattled(//Event emitted when a battle happens to report out the outcome.
         address _currentPlayer,
-        //bool _roundWin,
-        string _outcome//,
-        //int8 _healthChange,
-        //uint256 _winStreak
+        string _outcome
     );
 
     event emitRareItemAttributesFromMainContract(//Event emitted to report out the attributes of a rare item such as when the rare item is earned/minted.
@@ -52,7 +49,6 @@ contract rockPaperSatoshi {
         uint256 _lossAbsorb,//Loss absorbe attribute of rare item.
         uint256 _incomeForWinBonus,//Income for win bonus attribute from rare item.
         uint256 _maxHealthIncreaseModifier,//Health increase modifier attribute from rare item.
-        //uint256 _RPSatoshiCostToUse,
         uint256 _healthCostToUse,//Health cost to use attribute from rare item.
         bool _equipped//Rare item equipped status.
     );
@@ -77,12 +73,12 @@ contract rockPaperSatoshi {
     }
 
     modifier onlyUnregisterd() {//Function modifier for actions only unregistered players can perform. Only used for register function.
-        require(!players[msg.sender].registered,"Only Unregistered players of Rock Paper Satoshi can perform this.");
+        require(!players[msg.sender].registered,"Only unregistered players of Rock Paper Satoshi can perform this.");
         _;
     }
 
     modifier notInBattle() {
-        require(!players[msg.sender].inPvEBattle, "This cannot be performed while in battle.");
+        require(!players[msg.sender].inPvEEncounter, "This cannot be performed while in battle.");
         _;
     }
 
@@ -91,7 +87,6 @@ contract rockPaperSatoshi {
     }
 
     function register(string memory name_) public onlyUnregisterd {//Function for unregistered players to register.
-        //players[msg.sender].playerAddress = msg.sender;
         players[msg.sender].name = name_;//Store the registering player's name in the "players" mapping.
         players[msg.sender].registered = true;//Mark the player as registered.
         players[msg.sender].healthMax = 100;//Initialize the players max health to 100.
@@ -100,52 +95,31 @@ contract rockPaperSatoshi {
     }
 
     function initPvE() public onlyRegistered notInBattle {//Function to initialize a PvE encounter. Players battle a bot until they win, lose, or run out of health due to a rare item costing health to use.
-        require(players[msg.sender].health > 0 && players[msg.sender].health > players[msg.sender].currentHealthCostToUse);//Require that the player has enough health to pay their rare item health cost.
-        require(players[msg.sender].health <= 300);//Health should never be above 300 so this is a bug/exploit catch.
-        //require(RPSatoshi.balanceOf(msg.sender) >= players[msg.sender].currentRPSatoshiCostToUse * 10**RPSatoshi.decimals());
-        players[msg.sender].inPvEBattle = true;//Set the player's status to in battle.
+        require(players[msg.sender].health > 0 && players[msg.sender].health > players[msg.sender].currentHealthCostToUse, "Player does not have enough health to battle");//Require that the player has enough health to pay their rare item health cost.
+        require(players[msg.sender].health <= 300, "Player's health is too high. What happened??");//Health should never be above 300 so this is a bug/exploit catch.
+        players[msg.sender].inPvEEncounter = true;//Set the player's status to in battle.
         players[msg.sender].currentLossAbsorb = players[msg.sender].currentLossAbsorbMax;//Since it's the start of an encounter, set the players loss absorb to the max allowed by their rare item(s) (max of 2).
         
     }
 
     function battlePvE(uint256 move_) public onlyRegistered {//Function for the player to battle the bot encountered with either a rock, paper, or scissors. Possibly outcomes are draw, win, lose, and loss absorbed.
-        require(players[msg.sender].inPvEBattle == true);//Require the player to be in a PvE encounter.
-        //if(players[msg.sender].health == 0 || players[msg.sender].health < players[msg.sender].currentHealthCostToUse){//If the players
-        //    emit emitUint256("Player health is too low. They only have: ", players[msg.sender].health);
-        //    emit emitUint256("players[msg.sender].currentHealthCostToUse", players[msg.sender].currentHealthCostToUse);
-        //    players[msg.sender].inPvEBattle = false;//This happens if player runs out of health due to Rare item health loss.
-        //    return();//Need to return here otherwise reverting will reset the state change we made of inPvEBattle = false.
+        require(players[msg.sender].inPvEEncounter == true, "The player must be in an encounter to perform this. Try initPvE");//Require the player to be in a PvE encounter.
         require(players[msg.sender].health > 0 || players[msg.sender].health > players[msg.sender].currentHealthCostToUse, "Player's health is too low");//Require the player to have more than 0 health and also enough health to pay the health cost of their rare item(s).
-        //}else if(players[msg.sender].health > 300){
-        //    emit emitUint256("Player health overflowed. They have: ", players[msg.sender].health);
-        //    players[msg.sender].inPvEBattle = false;//
-        //    return();//Need to return here otherwise reverting will reset the state change we made of inPvEBattle = false.
-        //}
         require(players[msg.sender].health <= 300, "Players health is too high. What happened??");//Require the players health to be less than or equal to 300 which is the max possibly health in the game.
-        //else if(RPSatoshi.balanceOf(msg.sender) < players[msg.sender].currentRPSatoshiCostToUse * 10**RPSatoshi.decimals()){
-        //    emit emitUint256("Player is too low on RPSatoshis. They have only: ", RPSatoshi.balanceOf(msg.sender));
-        //    emit emitUint256("players[msg.sender].currentRPSatoshiCostToUse * 10**RPSatoshi.decimals()", players[msg.sender].currentRPSatoshiCostToUse * 10**RPSatoshi.decimals());
-        //    players[msg.sender].inPvEBattle = false;//This happens if player runs out of health due to Rare item health loss.
-        //    return();//Need to return here otherwise reverting will reset the state change we made of inPvEBattle = false.
-        //}
-        //RPSatoshi.burnFromUser(msg.sender, players[msg.sender].currentRPSatoshiCostToUse * 10**RPSatoshi.decimals());//This should never revert.
         players[msg.sender].health -= players[msg.sender].currentHealthCostToUse;//Player pays the health cost of their rare items.
-
-
         uint256 botMove = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % 3;//This psudo-random-number generator takes the block time and the players address to come up with the bots move.
         //We use block time since our game will be too small of a fish to manipulate (likely) and charging $3 in gas for every PvE battle is too much.
         //But maybe I can use a real oracle once someone's win streak reaches 15 or something.
 
         //Time to compare the player's move vs the bot's move. 0 = rock, 1 = paper, 2 = scissors. So 1 beats 0, 2 beats 1, and 0 beats 2.
         if ((botMove == 0 && move_ == 1) || (botMove == 1 && move_ == 2) || (botMove == 2 && move_ == 0)) {//All scenarios where the player beats the bot.
-            players[msg.sender].inPvEBattle = false;//Since the player won, they are no longer in battle.
+            players[msg.sender].inPvEEncounter = false;//Since the player won, they are no longer in battle.
 
-            //if(players[msg.sender].currentIncomeForWinBonus != 0){
-            //    RPSatoshi.mint(msg.sender, 10 + (players[msg.sender].currentIncomeForWinBonus * 10**RPSatoshi.decimals()));
-            //} else {
-            //    RPSatoshi.mint(msg.sender, 10 * 10**RPSatoshi.decimals());
-            //}
-            RPSatoshi.mint(msg.sender, 10 + (players[msg.sender].currentIncomeForWinBonus * 10**RPSatoshi.decimals()));//Give player their reward for winning. Base of 10 RPSatoshis + any bonuses from rare item(s).
+            RPSatoshi.mint(msg.sender, (10 + players[msg.sender].currentIncomeForWinBonus) * 10**RPSatoshi.decimals());//Give player their income reward for winning. Base of 10 RPSatoshis + any bonuses from rare item(s).
+            uint256 rareItemRoll = ((uint256(keccak256(abi.encodePacked(block.timestamp,move_)))) % 100) + 1 + players[msg.sender].winStreak;//1-100 Roll + bonus for the current win streak for whether the player earns a rare item. Psudo-random generator using a keccak hash of the block time + player's chosen move.
+            if(rareItemRoll > 95){//If the roll + win streak is greater than 95...
+                RPSRareItems.safeMint(msg.sender,players[msg.sender].winStreak);//The player earns a rare item.
+            }
             players[msg.sender].winStreak += 1;//Increment player win streak.
             if(players[msg.sender].winStreak > RPSKingStreak){//If player's new win streak makes them the new record holder.
                 RPSKingStreak = players[msg.sender].winStreak;//Update the global win streak to that of the current player.
@@ -157,30 +131,21 @@ contract rockPaperSatoshi {
             }
             emit botBattled(//Emit the outcome of the battle (Player wins)
                 msg.sender,
-                //true,
-                "Player Wins!"//,
-                //0,
-                //players[msg.sender].winStreak
+                "Player Wins!"
             );
         } else if (botMove == move_) {//If the player and bot chose the same move (Draw)
             //Draw
             emit botBattled(//Emit the outcome of the battle (Draw)
                 msg.sender,
-                //false,
-                "Draw"//,
-                //0,
-                //players[msg.sender].winStreak
+                "Draw"
             );
-            //Player is still in battle since inPvEBattle still = true
+            //Player is still in battle since inPvEEncounter still = true
         } else {//This leaves the only remaining scenarios to be that the bot won. However we will take into account loss absorb below.
            if(players[msg.sender].currentLossAbsorb > 0 && players[msg.sender].currentLossAbsorb < 3){//If the player has loss absorb of 1 or 2. We make sure it's less than 3 because 2 should be the highest acheivable.
                 players[msg.sender].currentLossAbsorb--;//Decrement the player's loss absorb.
                 emit botBattled(//Emit the outcome of the battle (Loss absorbed).
                     msg.sender,
-                    //false,
-                    "Loss absorbed!"//,
-                    //0,
-                    //players[msg.sender].winStreak
+                    "Loss absorbed!"
                 );
            } else{//If the player did not have loss absorb then the player has lost the encounter.
                 players[msg.sender].winStreak = 0;//Reset the players win streak back to 0.
@@ -190,29 +155,25 @@ contract rockPaperSatoshi {
                     players[msg.sender].health -= 10;//Otherwise, they had 10 or more health and it can be reduced by 10.
                 }
                 
-                players[msg.sender].inPvEBattle = false;//Update so that the player is lo longer in a PvE encounter.
-                //players[msg.sender].currentLossAbsorb = 0;//I don't think I need this since I always set this when we init PvE.
+                players[msg.sender].inPvEEncounter = false;//Update so that the player is lo longer in a PvE encounter.
                 emit botBattled(//Emit the outcome of the battle (bot wins).
                     msg.sender,
-                    //false,
-                    "Bot Wins"//,
-                    //-10,
-                    //players[msg.sender].winStreak
+                    "Bot Wins"
                 );
             }
         }
         if(players[msg.sender].health == 0){//If the players health reaches 0 from the previous battle,
             emit emitUint256("2nd Check: Player health is too low. They only have: ", players[msg.sender].health);
             players[msg.sender].winStreak = 0;//Reset the players win streak back to 0.
-            players[msg.sender].inPvEBattle = false;//Update so that the player is lo longer in a PvE encounter.
-            return();//Need to return here otherwise reverting will reset the state change we made of inPvEBattle = false.
+            players[msg.sender].inPvEEncounter = false;//Update so that the player is lo longer in a PvE encounter.
+            return();//Need to return here otherwise reverting will reset the state change we made of inPvEEncounter = false.
         }
     }
 
     function useHashHeal() public onlyRegistered notInBattle {//Function for the player to use up a hash heal to heal their health.
         RPSHashHeal.burnFromUser(msg.sender, 1 * 10**RPSHashHeal.decimals());//Burn (use up) 1 hash heal from the user.
-        if(players[msg.sender].health + 50 >= players[msg.sender].healthMax){//If the player would heal past max, then set their health to their max.
-            players[msg.sender].health = players[msg.sender].healthMax;
+        if(players[msg.sender].health + 50 >= players[msg.sender].healthMax){//If the player would heal past max, then..
+            players[msg.sender].health = players[msg.sender].healthMax;//Set the player's health to their max.
         } else{
             players[msg.sender].health += 50;//Otherwise, increase the players health by 50.
         }
@@ -228,12 +189,12 @@ contract rockPaperSatoshi {
     }
 
     function mintRareItem() public onlyRegistered {//Bug testing only. To be deleted. Needs to be incorporated into players playing/earning a win streak.
-        RPSRareItems.safeMint(msg.sender);
+        RPSRareItems.safeMint(msg.sender,0);
         //Probably should emit what they get.
     }
 
-    function equipRareItem(uint256 tokenId_) public onlyRegistered notInBattle {//Function for the player to equip rare items.
-        require(RPSRareItems.ownerOf(tokenId_) == msg.sender);//Require that the player is the owner of the rare item.
+    function equipRareItem(uint256 tokenId_) public onlyRegistered notInBattle {//Function for the player to equip rare items that they own.
+        require(RPSRareItems.ownerOf(tokenId_) == msg.sender, "Player must be the owner of the rare item.");//Require that the player is the owner of the rare item.
         uint256 equippedCounter;//This counter will be used to ensure the player cannot equip more than 2 items.
         for (uint256 i; i < RPSRareItems.balanceOf(msg.sender); i++) {//Initialize the loop iterations to the banlanceOf (aka # of) rare items the player owns.
             uint256 tokenIdToCheck = RPSRareItems.tokenOfOwnerByIndex(msg.sender,i);//Use tokenOfOwnerByIndex to get the token ID of each rare item owned by the user.
@@ -246,56 +207,49 @@ contract rockPaperSatoshi {
         RPSRareItems.equipToken(tokenId_);//Call the equipToken function from the RPSRareItems contract in order to make the item equipped.
         //If there is trading, need to make sure tokens are disabeled before they can be traded (or make it automatic).
         //Make is so they cannot trade during combat.
-            uint256 currentLossAbsorbMaxSum;//Will be used to calculate the loss absorb gained from the 1-2 rare items the player has equipped.
+            uint256 currentLossAbsorbMaxSum;//Will be used to calculate/sum the loss absorb gained from the 1-2 rare items the player has equipped.
             uint256 incomeForWinBonusSum_;//Will be used to calculate the income from winning bonus gained from the 1-2 rare items the player has equipped.
             uint256 maxHealthIncreaseModifierSum_;//Will be used to calculate the max income from winning bonus gained from the 1-2 rare items the player has equipped.
-            //uint256 RPSatoshiCostToUseSum_;
             uint256 healthCostToUseSum_;//Will be used to calculate the rare item health cost from the 1-2 rare items the player has equipped.
 
             for (uint256 i; i < RPSRareItems.balanceOf(msg.sender); i++) {//Initialize the loop iterations to the banlanceOf (aka # of) rare items the player owns.
                 uint256 tokenIdToCheck = RPSRareItems.tokenOfOwnerByIndex(msg.sender,i);//Use tokenOfOwnerByIndex to get the token ID of each rare item owned by the user.
                 RPSRareItemsToken.RareItemAttributes memory rareItemAttributesFromToken = RPSRareItems.readAttributesByTokenId(tokenIdToCheck);//Use the readAttributesByTokenId function to fill the rareItemAttributesFromToken struct with the current rare item from the loop.
-                //bool equipped_ = rareItemAttributesFromToken.equipped;
                 if(rareItemAttributesFromToken.equipped){//Check if the rare item is equipped.
-                    currentLossAbsorbMaxSum += rareItemAttributesFromToken.lossAbsorb;//Left off here. Continue commenting.
-                    incomeForWinBonusSum_ += rareItemAttributesFromToken.incomeForWinBonus;
-                    maxHealthIncreaseModifierSum_ += rareItemAttributesFromToken.maxHealthIncreaseModifier;
-                    //RPSatoshiCostToUseSum_ += rareItemAttributesFromToken.RPSatoshiCostToUse;
-                    healthCostToUseSum_ += rareItemAttributesFromToken.healthCostToUse;
+                    currentLossAbsorbMaxSum += rareItemAttributesFromToken.lossAbsorb;//Add the loss absorb for the current rare item to the sum.
+                    incomeForWinBonusSum_ += rareItemAttributesFromToken.incomeForWinBonus;//Add the income for winning bonus for the current rare item to the sum.
+                    maxHealthIncreaseModifierSum_ += rareItemAttributesFromToken.maxHealthIncreaseModifier;//Add the max health increase modifier for the current rare item to the sum.
+                    healthCostToUseSum_ += rareItemAttributesFromToken.healthCostToUse;//Add the health cost to use modifier for the current rare item to the sum.
                 }
 
             }
-            players[msg.sender].currentLossAbsorbMax = currentLossAbsorbMaxSum;
-            players[msg.sender].currentIncomeForWinBonus = incomeForWinBonusSum_;
-            //players[msg.sender].currentmaxHealthIncreaseModifier = maxHealthIncreaseModifierSum_;//To delete if no issues.
-            players[msg.sender].healthMax = 100 + maxHealthIncreaseModifierSum_;
-            //players[msg.sender].currentRPSatoshiCostToUse = RPSatoshiCostToUseSum_;
-            players[msg.sender].currentHealthCostToUse = healthCostToUseSum_;
+            players[msg.sender].currentLossAbsorbMax = currentLossAbsorbMaxSum;//Set the players loss absorb max to what we just summed up from the rare items they had enabled.
+            players[msg.sender].currentIncomeForWinBonus = incomeForWinBonusSum_;//Set the players current income for win bonus to what we just summed up from the rare items they had enabled.
+            players[msg.sender].healthMax = 100 + maxHealthIncreaseModifierSum_;//Set the players max health to 100 + the modifier we just summed up from the rare items they had enabled.
+            players[msg.sender].currentHealthCostToUse = healthCostToUseSum_;//Set the players current health cost to use to what we just summed up from the rare items they had enabled.
 
             emit emitRareItemAttributesFromMainContract(
                 "Emit the sum of attributes of the equipped NFTs owned by the user",
                 currentLossAbsorbMaxSum,
                 incomeForWinBonusSum_,
                 maxHealthIncreaseModifierSum_,
-                //RPSatoshiCostToUseSum_,
                 healthCostToUseSum_,
                 true
             );
 
     }
 
-    function disableRareItem(uint256 tokenId_) public onlyRegistered notInBattle {
-        require(RPSRareItems.ownerOf(tokenId_) == msg.sender, "Must be the owner of the rare item.");
-        RPSRareItemsToken.RareItemAttributes memory rareItemAttributesFromToken = RPSRareItems.readAttributesByTokenId(tokenId_);
-        require(rareItemAttributesFromToken.equipped,"The item is not equipped.");
-        players[msg.sender].currentLossAbsorbMax -= rareItemAttributesFromToken.lossAbsorb;
-        players[msg.sender].currentIncomeForWinBonus -= rareItemAttributesFromToken.incomeForWinBonus;
-        players[msg.sender].healthMax -= rareItemAttributesFromToken.maxHealthIncreaseModifier;
-        //players[msg.sender].currentRPSatoshiCostToUse -= rareItemAttributesFromToken.RPSatoshiCostToUse;
-        players[msg.sender].currentHealthCostToUse -= rareItemAttributesFromToken.healthCostToUse;
-        if(players[msg.sender].healthMax < players[msg.sender].health){
-            players[msg.sender].health = players[msg.sender].healthMax;
+    function unequipRareItem(uint256 tokenId_) public onlyRegistered notInBattle {//Function that registered players can use to unequip the rare items they previously had equipped.
+        require(RPSRareItems.ownerOf(tokenId_) == msg.sender, "Player must be the owner of the rare item.");//Require that the player ownes the rare item they are attempting to unequip.
+        RPSRareItemsToken.RareItemAttributes memory rareItemAttributesFromToken = RPSRareItems.readAttributesByTokenId(tokenId_);//Use the readAttributesByTokenId function to fill the rareItemAttributesFromToken struct with the rare item to be unequipped.
+        require(rareItemAttributesFromToken.equipped,"The item is not equipped.");//Require that the rare item is equipped.
+        players[msg.sender].currentLossAbsorbMax -= rareItemAttributesFromToken.lossAbsorb;//Substract the loss absorb max modifier that the rare item provided. Aka remove the buff.
+        players[msg.sender].currentIncomeForWinBonus -= rareItemAttributesFromToken.incomeForWinBonus;//Substract the income for win bonus modifier that the rare item provided. Aka remove the buff.
+        players[msg.sender].healthMax -= rareItemAttributesFromToken.maxHealthIncreaseModifier;//Substract the max health increase modifier that the rare item provided. Aka remove the buff.
+        players[msg.sender].currentHealthCostToUse -= rareItemAttributesFromToken.healthCostToUse;//Substract the health cost to use modifier that the rare item provided. Aka remove the debuff.
+        if(players[msg.sender].healthMax < players[msg.sender].health){//If the player's max health is lower than their current health...
+            players[msg.sender].health = players[msg.sender].healthMax;//set their health to their max health.
         }
-        RPSRareItems.disableToken(tokenId_);
+        RPSRareItems.unequipToken(tokenId_);//Finally, unequip the rare item by calling the function from the RPSRareItems REC721 contract.
     }
 }

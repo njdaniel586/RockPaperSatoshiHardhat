@@ -21,27 +21,9 @@
 					},
 					{
 						"indexed": false,
-						"internalType": "bool",
-						"name": "_roundWin",
-						"type": "bool"
-					},
-					{
-						"indexed": false,
 						"internalType": "string",
 						"name": "_outcome",
 						"type": "string"
-					},
-					{
-						"indexed": false,
-						"internalType": "int8",
-						"name": "_healthChange",
-						"type": "int8"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "_winStreak",
-						"type": "uint256"
 					}
 				],
 				"name": "botBattled",
@@ -65,19 +47,13 @@
 					{
 						"indexed": false,
 						"internalType": "uint256",
-						"name": "_incomeForWinOverride",
+						"name": "_incomeForWinBonus",
 						"type": "uint256"
 					},
 					{
 						"indexed": false,
 						"internalType": "uint256",
-						"name": "_healthModifier",
-						"type": "uint256"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "_RPSatoshiCostToUse",
+						"name": "_maxHealthIncreaseModifier",
 						"type": "uint256"
 					},
 					{
@@ -89,7 +65,7 @@
 					{
 						"indexed": false,
 						"internalType": "bool",
-						"name": "_enabled",
+						"name": "_equipped",
 						"type": "bool"
 					}
 				],
@@ -130,6 +106,19 @@
 			},
 			{
 				"inputs": [],
+				"name": "RPSKingName",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "RPSKingStreak",
 				"outputs": [
 					{
@@ -156,19 +145,6 @@
 			},
 			{
 				"inputs": [],
-				"name": "contractAddress",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
 				"name": "contractName",
 				"outputs": [
 					{
@@ -188,20 +164,7 @@
 						"type": "uint256"
 					}
 				],
-				"name": "disableRareItem",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "tokenId_",
-						"type": "uint256"
-					}
-				],
-				"name": "enableRareItem",
+				"name": "equipRareItem",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -291,23 +254,13 @@
 						"type": "bool"
 					},
 					{
-						"internalType": "address",
-						"name": "playerAddress",
-						"type": "address"
-					},
-					{
 						"internalType": "uint256",
 						"name": "health",
 						"type": "uint256"
 					},
 					{
-						"internalType": "uint256",
-						"name": "healthMax",
-						"type": "uint256"
-					},
-					{
 						"internalType": "bool",
-						"name": "inPvEBattle",
+						"name": "inPvEEncounter",
 						"type": "bool"
 					},
 					{
@@ -317,22 +270,27 @@
 					},
 					{
 						"internalType": "uint256",
+						"name": "maxWinStreak",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "currentLossAbsorbMax",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
 						"name": "currentLossAbsorb",
 						"type": "uint256"
 					},
 					{
 						"internalType": "uint256",
-						"name": "currentIncomeForWinOverride",
+						"name": "currentIncomeForWinBonus",
 						"type": "uint256"
 					},
 					{
 						"internalType": "uint256",
-						"name": "currentHealthModifier",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "currentRPSatoshiCostToUse",
+						"name": "healthMax",
 						"type": "uint256"
 					},
 					{
@@ -353,6 +311,19 @@
 					}
 				],
 				"name": "register",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId_",
+						"type": "uint256"
+					}
+				],
+				"name": "unequipRareItem",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -553,11 +524,11 @@
 			]
 		},
 		"contracts/RPSRareItemsToken.sol": {
-			"keccak256": "0xc2d339dd1c8a8840fb89ffa8b28da319e2240ef608329266ca24da3031081415",
+			"keccak256": "0x39eb8073a8f8e3bd71fccefb15bc700bf12b160593a83eb81bb378b850e4e67d",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://4ab9ac9bd0db370ad5ec2e6ca30846ee1850547ad0bb8c5393217df29476f024",
-				"dweb:/ipfs/Qmf78uihvwDfTXn6F7Zo2P8ZAsQKKTG4HD158f7KgJSWq7"
+				"bzz-raw://772d77b1099a70fb4fb98f631361bd31eb872a73ccfcbfc1c7881b0c2fe8ddc6",
+				"dweb:/ipfs/QmSmvjyrQVPX83V3qyjgnmTMWi1Do9sEYf9FWZ9tPPkhco"
 			]
 		},
 		"contracts/RPSatoshiToken.sol": {
@@ -569,11 +540,11 @@
 			]
 		},
 		"contracts/rockPaperSatoshi.sol": {
-			"keccak256": "0xf6c1691415676ab4fe03f738c31d631806d19bba1ec50cb59d58086fc8da744d",
+			"keccak256": "0xaa6a7c84f6766d8abc1742ed09f92853de4bfaada09ead46298d7d5d54e94968",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://deecf750fa07f8afcd018f485c6a4c8937b5be7e7c7e816c4ee37f175233b38a",
-				"dweb:/ipfs/QmbYcfhogL28byxTee4wiNVbiRe2qC6G85Mwhn8Mh37tmX"
+				"bzz-raw://ebe2649c211fbd6fa7fbf38ae80adc0263ed15886a37afeda61fadea42f37d57",
+				"dweb:/ipfs/QmP2nJc5T49jY9yrxhy9K9pN3f54F4SxKT8ttNoF5KfvZq"
 			]
 		}
 	},

@@ -131,11 +131,6 @@
 							},
 							{
 								"internalType": "uint256",
-								"name": "RPSatoshiCostToUse",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
 								"name": "healthCostToUse",
 								"type": "uint256"
 							},
@@ -212,19 +207,6 @@
 						"type": "uint256"
 					}
 				],
-				"name": "disableToken",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "tokenId",
-						"type": "uint256"
-					}
-				],
 				"name": "equipToken",
 				"outputs": [],
 				"stateMutability": "nonpayable",
@@ -260,11 +242,6 @@
 							{
 								"internalType": "uint256",
 								"name": "maxHealthIncreaseModifier",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
-								"name": "RPSatoshiCostToUse",
 								"type": "uint256"
 							},
 							{
@@ -408,11 +385,6 @@
 							},
 							{
 								"internalType": "uint256",
-								"name": "RPSatoshiCostToUse",
-								"type": "uint256"
-							},
-							{
-								"internalType": "uint256",
 								"name": "healthCostToUse",
 								"type": "uint256"
 							},
@@ -427,7 +399,7 @@
 						"type": "tuple"
 					}
 				],
-				"stateMutability": "nonpayable",
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -443,6 +415,11 @@
 						"internalType": "address",
 						"name": "to",
 						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "winStreak",
+						"type": "uint256"
 					}
 				],
 				"name": "safeMint",
@@ -658,6 +635,19 @@
 					}
 				],
 				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "unequipToken",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -880,11 +870,11 @@
 			]
 		},
 		"contracts/RPSRareItemsToken.sol": {
-			"keccak256": "0x39eb8073a8f8e3bd71fccefb15bc700bf12b160593a83eb81bb378b850e4e67d",
+			"keccak256": "0x8b8b9883ff1c5002d5fc8837e2721ad3b34daa65acc2640fd2e47f1b0c3e9eb3",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://772d77b1099a70fb4fb98f631361bd31eb872a73ccfcbfc1c7881b0c2fe8ddc6",
-				"dweb:/ipfs/QmSmvjyrQVPX83V3qyjgnmTMWi1Do9sEYf9FWZ9tPPkhco"
+				"bzz-raw://b4a0aced993ffaf2fd20b0afda6d66186b889cde03202af978c4234a844edfcf",
+				"dweb:/ipfs/QmdZYVDAGjvr8vFUcFRZDAvuPniEcekM4GZDpM6s4SAain"
 			]
 		}
 	},
