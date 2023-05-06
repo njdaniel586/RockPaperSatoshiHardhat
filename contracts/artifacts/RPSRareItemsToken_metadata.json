@@ -144,6 +144,12 @@
 						"internalType": "struct RPSRareItemsToken.RareItemAttributes",
 						"name": "rareItemAttributes_",
 						"type": "tuple"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "rareItemOwner",
+						"type": "address"
 					}
 				],
 				"name": "emitRareItemAttributes",
@@ -870,11 +876,11 @@
 			]
 		},
 		"contracts/RPSRareItemsToken.sol": {
-			"keccak256": "0x8b8b9883ff1c5002d5fc8837e2721ad3b34daa65acc2640fd2e47f1b0c3e9eb3",
+			"keccak256": "0x7f9d9fc5ffcbab80bd0a727b1ecf2dac26fb51cc3ac71c0b7e7a8088fdb47f22",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://b4a0aced993ffaf2fd20b0afda6d66186b889cde03202af978c4234a844edfcf",
-				"dweb:/ipfs/QmdZYVDAGjvr8vFUcFRZDAvuPniEcekM4GZDpM6s4SAain"
+				"bzz-raw://ae5c058ded29e8973da79ba1c50af56c9e2fd6b8e702d5f643ba20219ec2bcd1",
+				"dweb:/ipfs/QmRxN8YGoavV6YHJ7WQNJQFJX5ACaoh9u8gLKcCRaMgNmd"
 			]
 		}
 	},

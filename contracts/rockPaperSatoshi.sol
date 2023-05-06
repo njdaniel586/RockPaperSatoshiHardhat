@@ -3,20 +3,20 @@ pragma solidity ^0.8.18;
 
 //import "hardhat/console.sol";
 
-import "./RPSatoshiToken.sol";
-import "./RPSHashHealToken.sol";
-import "./RPSRareItemsToken.sol";
+import "./RPSatoshiToken.sol";//This is our general currency (ERC20) token contract.
+import "./RPSHashHealToken.sol";//This is our common healing item (ERC20) token contract.
+import "./RPSRareItemsToken.sol";//This is our (ERC721) contract for minting and keeping track of unique/rare items the player can obtain.
 
 contract rockPaperSatoshi {
     string public contractName = "rockPaperSatoshi";
 
-    RPSatoshiToken private RPSatoshi;//This is our general currency token contract.
-    RPSHashHealToken private RPSHashHeal;//This is our common healing item contract.
-    RPSRareItemsToken private RPSRareItems;//This is our contract for minting and keeping track of unique/rare items the player can obtain.
+    RPSatoshiToken private RPSatoshi;//This is our general currency (ERC20) token contract.
+    RPSHashHealToken private RPSHashHeal;//This is our common healing item (ERC20) token contract.
+    RPSRareItemsToken private RPSRareItems;//This is our (ERC721) contract for minting and keeping track of unique/rare items the player can obtain.
 
     struct player {
         string name;//A store of the players name.
-        bool registered;//Wether or not the player is registered
+        bool registered;//Whether or not the player is registered.
         uint256 health;//The current health of the player (changes with any healing/damage taken).
         bool inPvEEncounter;//Wether or not the player is in a PvE battle.
         uint256 winStreak;//The current win streak of the player.
@@ -77,8 +77,8 @@ contract rockPaperSatoshi {
         _;
     }
 
-    modifier notInBattle() {
-        require(!players[msg.sender].inPvEEncounter, "This cannot be performed while in battle.");
+    modifier notInEncounter() {
+        require(!players[msg.sender].inPvEEncounter, "This cannot be performed while in an encounter.");
         _;
     }
 
@@ -94,7 +94,7 @@ contract rockPaperSatoshi {
         totalPlayers ++;//Increment the count of the total registered players for the contract.
     }
 
-    function initPvE() public onlyRegistered notInBattle {//Function to initialize a PvE encounter. Players battle a bot until they win, lose, or run out of health due to a rare item costing health to use.
+    function initPvE() public onlyRegistered notInEncounter {//Function to initialize a PvE encounter. Players battle a bot until they win, lose, or run out of health due to a rare item costing health to use.
         require(players[msg.sender].health > 0 && players[msg.sender].health > players[msg.sender].currentHealthCostToUse, "Player does not have enough health to battle");//Require that the player has enough health to pay their rare item health cost.
         require(players[msg.sender].health <= 300, "Player's health is too high. What happened??");//Health should never be above 300 so this is a bug/exploit catch.
         players[msg.sender].inPvEEncounter = true;//Set the player's status to in battle.
@@ -104,7 +104,13 @@ contract rockPaperSatoshi {
 
     function battlePvE(uint256 move_) public onlyRegistered {//Function for the player to battle the bot encountered with either a rock, paper, or scissors. Possibly outcomes are draw, win, lose, and loss absorbed.
         require(players[msg.sender].inPvEEncounter == true, "The player must be in an encounter to perform this. Try initPvE");//Require the player to be in a PvE encounter.
-        require(players[msg.sender].health > 0 || players[msg.sender].health > players[msg.sender].currentHealthCostToUse, "Player's health is too low");//Require the player to have more than 0 health and also enough health to pay the health cost of their rare item(s).
+        //require(players[msg.sender].health > 0 || players[msg.sender].health > players[msg.sender].currentHealthCostToUse, "Player does not have enough health to battle");//Require the player to have more than 0 health and also enough health to pay the health cost of their rare item(s).
+        if(players[msg.sender].health == 0 || players[msg.sender].health < players[msg.sender].currentHealthCostToUse){//Check that the player has more than 0 health and also enough health to pay the health cost of their rare item(s).
+            emit emitUint256("Player health is too low. They only have: ", players[msg.sender].health);//Emit that the player's health is too low.
+            players[msg.sender].winStreak = 0;//Reset the players win streak back to 0.
+            players[msg.sender].inPvEEncounter = false;//Update so that the player is lo longer in a PvE encounter.
+            return();//Need to return here otherwise reverting will reset the state change we made of inPvEEncounter = false.
+        }
         require(players[msg.sender].health <= 300, "Players health is too high. What happened??");//Require the players health to be less than or equal to 300 which is the max possibly health in the game.
         players[msg.sender].health -= players[msg.sender].currentHealthCostToUse;//Player pays the health cost of their rare items.
         uint256 botMove = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % 3;//This psudo-random-number generator takes the block time and the players address to come up with the bots move.
@@ -163,14 +169,15 @@ contract rockPaperSatoshi {
             }
         }
         if(players[msg.sender].health == 0){//If the players health reaches 0 from the previous battle,
-            emit emitUint256("2nd Check: Player health is too low. They only have: ", players[msg.sender].health);
+            emit emitUint256("Player's health is too low. They only have: ", players[msg.sender].health);//Emit that the player's health is too low.
             players[msg.sender].winStreak = 0;//Reset the players win streak back to 0.
             players[msg.sender].inPvEEncounter = false;//Update so that the player is lo longer in a PvE encounter.
             return();//Need to return here otherwise reverting will reset the state change we made of inPvEEncounter = false.
         }
     }
 
-    function useHashHeal() public onlyRegistered notInBattle {//Function for the player to use up a hash heal to heal their health.
+    function useHashHeal() public onlyRegistered notInEncounter {//Function for the player to use up a hash heal to heal their health.
+        require(RPSHashHeal.balanceOf(msg.sender) > 0, "The player does not have any Hash Heals");//Require the user to have a Hash Heal.
         RPSHashHeal.burnFromUser(msg.sender, 1 * 10**RPSHashHeal.decimals());//Burn (use up) 1 hash heal from the user.
         if(players[msg.sender].health + 50 >= players[msg.sender].healthMax){//If the player would heal past max, then..
             players[msg.sender].health = players[msg.sender].healthMax;//Set the player's health to their max.
@@ -184,8 +191,24 @@ contract rockPaperSatoshi {
         RPSHashHeal.mint(msg.sender, 1*10**RPSHashHeal.decimals());
     }
 
+    function buyHashHeal() public onlyRegistered notInEncounter {//Function that let's the player buy hash heals using RPSatoshis.
+        require(RPSatoshi.balanceOf(msg.sender) >= 30 * 10**RPSatoshi.decimals(), "The player does not have enough RPSatoshis");//Require the player to have enough RPSatoshis to purchase.
+        RPSHashHeal.mint(msg.sender, 1*10**RPSHashHeal.decimals());
+    }
+
     function getMoney() public onlyRegistered {//Bug testing only. To be deleted.
         RPSatoshi.mint(msg.sender, 10*10**RPSatoshi.decimals());
+    }
+
+    function buyRPSatoshisWithEth() public payable onlyRegistered notInEncounter {//Function that let's the player buy RPSatoshis with real eth.
+        uint256 RPSatoshisBeingPurchased = msg.value / (10**5);//Fixed exchange rate is 1 eth = 100,000 RPSatoshis.
+        RPSatoshi.mint(msg.sender, RPSatoshisBeingPurchased);//Mint the RPSatoshis purchased to the user.
+    }
+
+    function widthraw() public payable onlyOwner{
+        require(address(this).balance > 0, "Contract has no balance to withdraw");//Require that the contract has a greater than 0 balance.
+        (bool success,) = msg.sender.call{value: address(this).balance}("");// Sends the entire balance of the contract to the owner.
+        require(success, "Failed to widthraw Ether");//Require that the eth was sent.
     }
 
     function mintRareItem() public onlyRegistered {//Bug testing only. To be deleted. Needs to be incorporated into players playing/earning a win streak.
@@ -193,10 +216,10 @@ contract rockPaperSatoshi {
         //Probably should emit what they get.
     }
 
-    function equipRareItem(uint256 tokenId_) public onlyRegistered notInBattle {//Function for the player to equip rare items that they own.
+    function equipRareItem(uint256 tokenId_) public onlyRegistered notInEncounter {//Function for the player to equip rare items that they own.
         require(RPSRareItems.ownerOf(tokenId_) == msg.sender, "Player must be the owner of the rare item.");//Require that the player is the owner of the rare item.
         uint256 equippedCounter;//This counter will be used to ensure the player cannot equip more than 2 items.
-        for (uint256 i; i < RPSRareItems.balanceOf(msg.sender); i++) {//Initialize the loop iterations to the banlanceOf (aka # of) rare items the player owns.
+        for (uint256 i; i < RPSRareItems.balanceOf(msg.sender); i++) {//Loop through all the rare items the player ownes and check that they don't already have the max of 2 equipped. Initialize the loop iterations to the banlanceOf (aka # of) rare items the player owns.
             uint256 tokenIdToCheck = RPSRareItems.tokenOfOwnerByIndex(msg.sender,i);//Use tokenOfOwnerByIndex to get the token ID of each rare item owned by the user.
             RPSRareItemsToken.RareItemAttributes memory rareItemAttributesFromToken = RPSRareItems.readAttributesByTokenId(tokenIdToCheck);//Use the readAttributesByTokenId function to fill the rareItemAttributesFromToken struct with the current rare item from the loop.
             if(rareItemAttributesFromToken.equipped){//Check if the rare item is equipped.
@@ -228,7 +251,7 @@ contract rockPaperSatoshi {
             players[msg.sender].healthMax = 100 + maxHealthIncreaseModifierSum_;//Set the players max health to 100 + the modifier we just summed up from the rare items they had enabled.
             players[msg.sender].currentHealthCostToUse = healthCostToUseSum_;//Set the players current health cost to use to what we just summed up from the rare items they had enabled.
 
-            emit emitRareItemAttributesFromMainContract(
+            emit emitRareItemAttributesFromMainContract(//Do I need this or would the frontend just run "players" getter.
                 "Emit the sum of attributes of the equipped NFTs owned by the user",
                 currentLossAbsorbMaxSum,
                 incomeForWinBonusSum_,
@@ -239,7 +262,7 @@ contract rockPaperSatoshi {
 
     }
 
-    function unequipRareItem(uint256 tokenId_) public onlyRegistered notInBattle {//Function that registered players can use to unequip the rare items they previously had equipped.
+    function unequipRareItem(uint256 tokenId_) public onlyRegistered notInEncounter {//Function that registered players can use to unequip the rare items they previously had equipped.
         require(RPSRareItems.ownerOf(tokenId_) == msg.sender, "Player must be the owner of the rare item.");//Require that the player ownes the rare item they are attempting to unequip.
         RPSRareItemsToken.RareItemAttributes memory rareItemAttributesFromToken = RPSRareItems.readAttributesByTokenId(tokenId_);//Use the readAttributesByTokenId function to fill the rareItemAttributesFromToken struct with the rare item to be unequipped.
         require(rareItemAttributesFromToken.equipped,"The item is not equipped.");//Require that the rare item is equipped.

@@ -12,7 +12,7 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
 
     Counters.Counter private _tokenIdCounter;
 
-    struct RareItemAttributes{//Struct to contain the individual attributed of each of the ERC721 rare item tokens.
+    struct RareItemAttributes{//Struct to contain the individual attributes of each of the ERC721 rare item tokens.
         uint256 tokenId;//Id of the token which will be the same as what's stored in the contract. This increments numerically as more get minted
         uint256 lossAbsorb;//Attribute of the rare item that provides single use loss prevention to the user.
         uint256 incomeForWinBonus;//Attribute of the rare item that provides a income buff to the user when they win.
@@ -23,7 +23,7 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
 
     mapping(uint256 => RareItemAttributes) private rareItemAttributes;//Rare item attributes mapped by token id.
 
-    event emitRareItemAttributes(RareItemAttributes rareItemAttributes_);//Event for emitting the rare item attributes.
+    event emitRareItemAttributes(RareItemAttributes rareItemAttributes_, address rareItemOwner);//Event for emitting the rare item attributes.
 
     constructor() ERC721("RPSRareItems", "RPR") {}//Nothing to do in the constructor.
 
@@ -31,7 +31,6 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
         uint256 tokenId_ = _tokenIdCounter.current();//ERC721 inherent
         _tokenIdCounter.increment();//ERC721 inherent
         _safeMint(to, tokenId_);//ERC721 inherent
-//Next I think I want to emit that a rare item got minted
         rareItemAttributes[tokenId_].tokenId = tokenId_;//Set the token Id in the rare item attributes to the token Id assigned by the inherent ERC721 enumerable function.
 
         uint256 lossAbsorbRoll = ((uint256(keccak256(abi.encodePacked(block.timestamp,to,tokenId_,"1")))) % 100) + 1 + winStreak; // roll a random number from 1 to 100 + bonus for players winstreak.
@@ -77,10 +76,10 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
         } else{  // 5% chance of health cost to use 5
             rareItemAttributes[tokenId_].healthCostToUse = 5;
         }
+        emit emitRareItemAttributes(rareItemAttributes[tokenId_], to);//Emit that a rare item was minted along with it's attributes.
     }
 
-    function readAttributesByTokenId(uint256 tokenId) public view returns(RareItemAttributes memory){//Function that returns the attributes of the token Id provided.
-        //emit emitRareItemAttributes(rareItemAttributes[tokenId]);
+    function readAttributesByTokenId(uint256 tokenId) public view returns(RareItemAttributes memory){//Function that returns the attributes of the token Id provided. This is called by both this and the main rockPaperSatoshi contract.
         return rareItemAttributes[tokenId];
     }
 
@@ -89,32 +88,32 @@ contract RPSRareItemsToken is ERC721, ERC721Enumerable, ERC721Burnable, Ownable 
         rareItemAttributes[tokenId].equipped = true;//Mark the rare item as equipped.
     }
 
-    function unequipToken(uint256 tokenId) public onlyOwner{
+    function unequipToken(uint256 tokenId) public onlyOwner{//Function that unequips the rare item. This is called by the main rockPaperSatoshi contract.
         //Should I also take in the msg.sender from the main contract and then confirm they are the owner of the tokenId as a double check?
-        require(rareItemAttributes[tokenId].equipped == true);
-        rareItemAttributes[tokenId].equipped = false;
+        require(rareItemAttributes[tokenId].equipped == true, "Rare item is already unequipped.");//Require that the rare item is not already unequipped.
+        rareItemAttributes[tokenId].equipped = false;//Mark the rare item as unequipped.
     }
 
     function getAllTokensOwnedByAddress(address address_) public view returns(RareItemAttributes[] memory rareItemAttributes_){//Gass free return of all tokens owned by the given address.
-        RareItemAttributes[] memory _rareItemAttributes = new RareItemAttributes[](balanceOf(address_));
-        for(uint256 i; i < balanceOf(address_); i++){
-            uint256 tokenId_ = tokenOfOwnerByIndex(address_, i);
-            _rareItemAttributes[i] = rareItemAttributes[tokenId_];
+        RareItemAttributes[] memory _rareItemAttributes = new RareItemAttributes[](balanceOf(address_));//Create a temporary array of the rare item attributes.
+        for(uint256 i; i < balanceOf(address_); i++){//Loop through the rare items owned by the given address and put them in the array. Initialize the loop iterations to the banlanceOf (aka # of) tokens owned by the given address.
+            uint256 tokenId_ = tokenOfOwnerByIndex(address_, i);//Find the token Id by using tokenOfOwnerByIndex and providing 'i' as the index.
+            _rareItemAttributes[i] = rareItemAttributes[tokenId_];//Grab the rareItemAttributes for the token Id and put them in the array.
         }
-        return _rareItemAttributes;
+        return _rareItemAttributes;//Return the array filled with all the rare item attributes owned by the given address.
     }
 
 
     // The following functions are overrides required by Solidity.
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)//ERC721 inherent
         internal
         override(ERC721, ERC721Enumerable)
     {
         super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(bytes4 interfaceId)//ERC721 inherent
         public
         view
         override(ERC721, ERC721Enumerable)
