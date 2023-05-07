@@ -876,11 +876,11 @@
 			]
 		},
 		"contracts/RPSRareItemsToken.sol": {
-			"keccak256": "0x7f9d9fc5ffcbab80bd0a727b1ecf2dac26fb51cc3ac71c0b7e7a8088fdb47f22",
+			"keccak256": "0xd518c9221ffbcb8b04013e61bc9da5f75672fa2511f79ee9aa613f64845c0883",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://ae5c058ded29e8973da79ba1c50af56c9e2fd6b8e702d5f643ba20219ec2bcd1",
-				"dweb:/ipfs/QmRxN8YGoavV6YHJ7WQNJQFJX5ACaoh9u8gLKcCRaMgNmd"
+				"bzz-raw://88d969e01a3fa14ded1006d61b3a848802aeb066441fc1a7cfe4cc42a042f062",
+				"dweb:/ipfs/QmWRgVXsRxj8tC7NDTcg2X66VcWX2pMTdHLtKAYfR7vfth"
 			]
 		}
 	},
