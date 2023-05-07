@@ -44,7 +44,7 @@ contract RockPaperSatoshi {
         string _outcome
     );
 
-    event emitRareItemAttributesFromMainContract(//Event emitted to report out the attributes of a rare item such as when the rare item is earned/minted.
+    event EmitRareItemAttributesFromMainContract(//Event emitted to report out the attributes of a rare item such as when the rare item is earned/minted.
         string _message,
         uint256 _lossAbsorb,//Loss absorbe attribute of rare item.
         uint256 _incomeForWinBonus,//Income for win bonus attribute from rare item.
@@ -53,7 +53,7 @@ contract RockPaperSatoshi {
         bool _equipped//Rare item equipped status.
     );
 
-    event emitUint256(string message, uint256 value);//Used for debugging
+    event EmitUint256(string message, uint256 value);//Used for debugging
 
     constructor() {
         owner = msg.sender;//Initialize owner address.
@@ -102,7 +102,7 @@ contract RockPaperSatoshi {
         require(players[msg.sender].inPvEEncounter == true, "The player must be in an encounter to perform this. Try initPvE");//Require the player to be in a PvE encounter.
         //require(players[msg.sender].health > 0 || players[msg.sender].health > players[msg.sender].currentHealthCostToUse, "Player does not have enough health to battle");//Require the player to have more than 0 health and also enough health to pay the health cost of their rare item(s).
         if(players[msg.sender].health == 0 || players[msg.sender].health < players[msg.sender].currentHealthCostToUse){//Check that the player has more than 0 health and also enough health to pay the health cost of their rare item(s).
-            emit emitUint256("Player health is too low. They only have: ", players[msg.sender].health);//Emit that the player's health is too low.
+            emit EmitUint256("Player health is too low. They only have: ", players[msg.sender].health);//Emit that the player's health is too low.
             players[msg.sender].winStreak = 0;//Reset the players win streak back to 0.
             players[msg.sender].inPvEEncounter = false;//Update so that the player is lo longer in a PvE encounter.
             return();//Need to return here otherwise reverting will reset the state change we made of inPvEEncounter = false.
@@ -165,7 +165,7 @@ contract RockPaperSatoshi {
             }
         }
         if(players[msg.sender].health == 0){//If the players health reaches 0 from the previous battle,
-            emit emitUint256("Player's health is too low. They only have: ", players[msg.sender].health);//Emit that the player's health is too low.
+            emit EmitUint256("Player's health is too low. They only have: ", players[msg.sender].health);//Emit that the player's health is too low.
             players[msg.sender].winStreak = 0;//Reset the players win streak back to 0.
             players[msg.sender].inPvEEncounter = false;//Update so that the player is lo longer in a PvE encounter.
             return();//Need to return here otherwise reverting will reset the state change we made of inPvEEncounter = false.
@@ -247,7 +247,7 @@ contract RockPaperSatoshi {
             players[msg.sender].healthMax = 100 + maxHealthIncreaseModifierSum_;//Set the players max health to 100 + the modifier we just summed up from the rare items they had enabled.
             players[msg.sender].currentHealthCostToUse = healthCostToUseSum_;//Set the players current health cost to use to what we just summed up from the rare items they had enabled.
 
-            emit emitRareItemAttributesFromMainContract(//Do I need this or would the frontend just run "players" getter.
+            emit EmitRareItemAttributesFromMainContract(//Do I need this or would the frontend just run "players" getter.
                 "Emit the sum of attributes of the equipped NFTs owned by the user",
                 currentLossAbsorbMaxSum,
                 incomeForWinBonusSum_,

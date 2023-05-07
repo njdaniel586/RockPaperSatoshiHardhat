@@ -69,7 +69,7 @@
 						"type": "bool"
 					}
 				],
-				"name": "emitRareItemAttributesFromMainContract",
+				"name": "EmitRareItemAttributesFromMainContract",
 				"type": "event"
 			},
 			{
@@ -88,7 +88,7 @@
 						"type": "uint256"
 					}
 				],
-				"name": "emitUint256",
+				"name": "EmitUint256",
 				"type": "event"
 			},
 			{
@@ -577,11 +577,11 @@
 			]
 		},
 		"contracts/RockPaperSatoshi.sol": {
-			"keccak256": "0x9ba0b54f1d1b363865abee59ec87d26f60a213eaa0daee409955781bc36eafab",
+			"keccak256": "0x3f1f97350c20de3142796fb694cfedd38349e8dda71d29304dd8642c56d4c624",
 			"license": "SEE LICENSE IN LICENSE",
 			"urls": [
-				"bzz-raw://a4900c978f7ba9f4a739920a66ddf24a6af5507449fbce38363b13b1f551c467",
-				"dweb:/ipfs/Qmb5i3oKEFtF7c8aPHAsc9UcXHSKd7f9ETpsqxz8sMgkeD"
+				"bzz-raw://01f802f0c5feffc324bfea20569facc4f1f49f3f976b40b0e5fa5963bab0ddc7",
+				"dweb:/ipfs/QmSVjoWWJgN8LQE7mXG5vV14D9A9zvEpqwfXfi4Lqganja"
 			]
 		}
 	},
