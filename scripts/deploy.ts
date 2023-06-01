@@ -1,19 +1,37 @@
 import { ethers } from "hardhat";
+import { RPSatoshiToken } from '../typechain-types/contracts/RPSatoshiToken';
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+  const RockPaperSatoshi = await ethers.getContractFactory("RockPaperSatoshi");
+  const rockPaperSatoshi = await RockPaperSatoshi.deploy();
 
-  const lockedAmount = ethers.utils.parseEther("0.001");
+  const RPSatoshiToken = await ethers.getContractFactory("RPSatoshiToken");
+  const rPSatoshiToken = await RPSatoshiToken.deploy();
 
-  const Lock = await ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  const RPSHashHealToken = await ethers.getContractFactory("RPSHashHealToken");
+  const rPSHashHealToken = await RPSHashHealToken.deploy();
 
-  await lock.deployed();
+  const RPSRareItemsToken = await ethers.getContractFactory("RPSRareItemsToken");
+  const rPSRareItemsToken = await RPSRareItemsToken.deploy();
+
+  await  rockPaperSatoshi.deployed();
+  await  rPSatoshiToken.deployed();
+  await  rPSHashHealToken.deployed();
+  await  rPSRareItemsToken.deployed();
 
   console.log(
-    `Lock with ${ethers.utils.formatEther(lockedAmount)}ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
+    "RockPaperSatoshi Deployed... to", rockPaperSatoshi.address
   );
+  console.log(
+    "RPSatoshiToken Deployed... to", rPSatoshiToken.address
+  );
+  console.log(
+    "RPSHashHealToken Deployed... to", rPSHashHealToken.address
+  );
+  console.log(
+    "RPSRareItemsToken Deployed... to", rPSRareItemsToken.address
+  );
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere

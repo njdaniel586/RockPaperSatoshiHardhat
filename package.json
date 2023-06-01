@@ -4,9 +4,16 @@
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
     "@typechain/ethers-v5": "^10.2.0",
     "hardhat": "^2.13.1",
-    "typechain": "^8.1.1"
+    "module-alias": "^2.2.2",
+    "ts-node": "^10.9.1",
+    "typechain": "^8.1.1",
+    "typescript": "^5.0.4"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.3"
-  }
+  },
+  "scripts": {
+    "compile": "hardhat compile --force && node --experimental-specifier-resolution=node scripts/exportABIs.mjs"
+  },
+  "type": "module"
 }
